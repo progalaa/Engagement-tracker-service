@@ -1,0 +1,24 @@
+{
+  "name": "crowdanalyzernodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "SqsClass.js",
+  "dependencies": {
+    "aws-sdk": "^2.835.0",
+    "faker": "^5.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/progalaa/Engagement-tracker-service.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/progalaa/Engagement-tracker-service/issues"
+  },
+  "homepage": "https://github.com/progalaa/Engagement-tracker-service#readme"
+}
