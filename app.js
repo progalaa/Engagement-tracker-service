@@ -1,5 +1,8 @@
-let sqs = require("./SqsClass");
+const {createSQSQueue, sendSQSMessage, recieveMessagesAndEnrich} = require("./SqsClass");
 var faker = require("faker");
+
+
+createSQSQueue('CrowdAnalyzer');
 
 
 var quereUrl = "https://sqs.me-south-1.amazonaws.com/513721399248/CrowdAnalyzer";
@@ -20,10 +23,10 @@ var fakeData = {
 }
 /** added fake data for messages */
 for (i = 0; i < 10; i++) {
-  // sqs.sendMessage(fakeData, quereUrl);
+  sendSQSMessage(fakeData, quereUrl);
 }
 
 
-sqs.recieveMessagesAndEnrich(quereUrl);
+recieveMessagesAndEnrich(quereUrl);
 
 

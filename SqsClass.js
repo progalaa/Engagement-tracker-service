@@ -8,19 +8,23 @@ const variables = {
   enrichedQueueName: "EnrichedQueue",
 };
 
-function createQueue() {
-  var params = { QueueName: variables.queueName };
+exports.createSQSQueue = function (name){
+  var url;
+  var params = { QueueName: name };
 
   sqs.createQueue(params, function (err, data) {
     if (err) {
-      return false;
+      return err;
     } else {
-      console.log(data.QueueUrl);
+      url = data.QueueUrl;
+      console.log(url);
     }
   });
+
+  return url;
 }
 
-function sendMessage(data, queueUrl) {
+exports.sendSQSMessage = function(data, queueUrl) {
   var params = {
     MessageBody: JSON.stringify(data),
     QueueUrl: queueUrl,
@@ -34,7 +38,7 @@ function sendMessage(data, queueUrl) {
   });
 }
 
-function recieveMessagesAndEnrich(queueURL) {
+exports.recieveMessagesAndEnrich = function (queueURL) {
   var params = {
     QueueUrl: queueURL,
   };
@@ -48,10 +52,10 @@ function recieveMessagesAndEnrich(queueURL) {
       var newMessage = JSON.parse(message.Body);
       newMessage.total_engagements = sum(newMessage.engagements);
 
-      createQueue(variables.enrichedQueueName);
-      sendMessage(
+      module.exports.createSQSQueue(variables.enrichedQueueName);
+      module.exports.sendSQSMessage(
         newMessage,
-        variables.baseQueueURL +'/'+variables.enrichedQueueName
+        variables.baseQueueURL + "/" + variables.enrichedQueueName
       );
     });
   });
@@ -67,6 +71,3 @@ function sum(obj) {
   return sum;
 }
 
-module.exports.createQueue = createQueue;
-module.exports.sendMessage = sendMessage;
-module.exports.recieveMessagesAndEnrich = recieveMessagesAndEnrich;
