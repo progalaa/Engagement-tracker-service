@@ -1,6 +1,7 @@
 var AWS = require("aws-sdk");
 AWS.config.update({ region: "me-south-1" });
 var sqs = new AWS.SQS({ apiVersion: "2012-11-05" });
+var fs = require("fs");
 
 const variables = {
   baseQueueURL: "https://sqs.me-south-1.amazonaws.com/513721399248",
@@ -8,7 +9,7 @@ const variables = {
   enrichedQueueName: "EnrichedQueue",
 };
 
-exports.createSQSQueue = function (name){
+exports.createSQSQueue = function (name) {
   var url;
   var params = { QueueName: name };
 
@@ -22,9 +23,9 @@ exports.createSQSQueue = function (name){
   });
 
   return url;
-}
+};
 
-exports.sendSQSMessage = function(data, queueUrl) {
+exports.sendSQSMessage = function (data, queueUrl) {
   var params = {
     MessageBody: JSON.stringify(data),
     QueueUrl: queueUrl,
@@ -36,7 +37,7 @@ exports.sendSQSMessage = function(data, queueUrl) {
       console.log("Success", data.MessageId);
     }
   });
-}
+};
 
 exports.recieveMessagesAndEnrich = function (queueURL) {
   var params = {
@@ -55,11 +56,14 @@ exports.recieveMessagesAndEnrich = function (queueURL) {
       module.exports.createSQSQueue(variables.enrichedQueueName);
       module.exports.sendSQSMessage(
         newMessage,
-        variables.baseQueueURL + "/" + variables.enrichedQueueName
+        variables.baseQueueURL + "/" + variables.enrichedQueueName+ "\n"
       );
+      var loggedMessage = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '') + ' >> ' +sum(newMessage.engagements) + '\n';
+      log(loggedMessage);
     });
   });
-}
+};
+
 
 function sum(obj) {
   var sum = 0;
@@ -71,3 +75,9 @@ function sum(obj) {
   return sum;
 }
 
+function log(message) {
+  fs.appendFile("log.txt", message, function (err) {
+    if (err) return console.log(err);
+    console.log("done");
+  });
+}
